@@ -17,8 +17,11 @@ def build(def params) {
       def namespace = openshift.project()
       stage('Checkout') {
         try {
+	  echo 'about to checkout and print namespace'
+	  echo namespace
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
         } catch (Exception e) {
+	  echo 'retrying with sslverify turned off'
           sh "git config http.sslVerify false"
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
         }
