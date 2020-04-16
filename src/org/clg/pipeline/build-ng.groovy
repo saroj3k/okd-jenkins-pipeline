@@ -49,10 +49,12 @@ def build(def params) {
        stage ('build image') {
 	    //    oc start-build angular-example-rhel --from-dir=dist --follow
 	       String bc2 = "${openshift.project()}-${params.gitBranch}"
+	        echo "Hello BuildImage ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
 	       echo 'building from saroj3k-okd-pipeline bc ${bc2}'
             sh '''
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
+	       echo "Hello buildImage within shellscript ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
 	      oc start-build "${openshift.project()}-${params.gitBranch}" --from-dir=dist --follow
             '''
 	    //kick off the build using Openshift raw command
