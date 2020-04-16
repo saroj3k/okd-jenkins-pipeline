@@ -21,7 +21,7 @@ def build(def params) {
         try {
 	  echo 'about to checkout and print namespace'
 		
-	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()}"
+	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
 
    
 		
@@ -48,11 +48,12 @@ def build(def params) {
           //build image
        stage ('build image') {
 	    //    oc start-build angular-example-rhel --from-dir=dist --follow
-	    echo 'building from saroj3k-okd-pipeline'
+	       String bc2 = "${openshift.project()}-${params.gitBranch}"
+	       echo 'building from saroj3k-okd-pipeline bc ${bc2}'
             sh '''
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
-	      oc start-build "${bc}" --from-dir=dist --follow
+	      oc start-build "${openshift.project()}-${params.gitBranch}" --from-dir=dist --follow
             '''
 	    //kick off the build using Openshift raw command
 	    //openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
