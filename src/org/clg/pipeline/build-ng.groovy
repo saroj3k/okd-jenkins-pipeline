@@ -20,9 +20,8 @@ def build(def params) {
       stage('test') {
           def pipelineValue = "${bc}"  //declare the parameter in groovy and use it in shellscript
           sh '''
-             echo '''+pipelineValue+' abcd''''
-	     a = '''pipelineValue'''
-	     echo a
+             echo '''+pipelineValue+'''
+	 
              '''
         }
 	    
