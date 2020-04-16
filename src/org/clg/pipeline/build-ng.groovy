@@ -16,7 +16,13 @@ def build(def params) {
       openshift.raw("label secret ${params.gitSecret} credential.sync.jenkins.openshift.io=true --overwrite")
       def namespace = openshift.project()
       String bc = "${params.bldConfig}"
-
+      
+      stage('test') {
+          def pipelineValue = "${bc}"  //declare the parameter in groovy and use it in shellscript
+          sh '''
+             echo '''+pipelineValue+' abcd''''
+             '''
+        }
 	    
       stage('Checkout') {
         try {
