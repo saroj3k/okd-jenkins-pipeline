@@ -18,19 +18,19 @@ def build(def params) {
       String bc = "${params.bldConfig}"
       
       stage('test') {
+	  /**
+	   *. Test stage to try out groovy commands, such as passing a value from groovy to shell
+	   */
           def pipelineValue = "${bc}"  //declare the parameter in groovy and use it in shellscript
 	  /* learnt the hardway that singlequote and a plus character is required for groovy variable to be visible in shell*/
           sh '''
              echo '''+pipelineValue+'''
-	     oc start-build '''+bc+''' --from-dir=dist --follow
              '''
         }
 	    
       stage('Checkout') {
         try {
-	  echo 'about to checkout and print namespace'
-		
-	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"		
+	  //echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"		
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
         } catch (Exception e) {
 	  echo 'retrying with sslverify turned off'
@@ -51,7 +51,7 @@ def build(def params) {
             sh '$(npm bin)/ng build --prod --build-optimizer'
           } //stage build
 
-          //build image
+       //build image
        stage ('build image') {
 
 	     /**
@@ -61,7 +61,7 @@ def build(def params) {
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
 	      oc start-build '''+bc+''' --from-dir=dist --follow
-            '''
+             '''
 	       
           } //stage build image	    
       } //openshift withProject
