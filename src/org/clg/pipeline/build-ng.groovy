@@ -15,7 +15,7 @@ def build(def params) {
     openshift.withProject() {
       openshift.raw("label secret ${params.gitSecret} credential.sync.jenkins.openshift.io=true --overwrite")
       def namespace = openshift.project()
-      String bc = '${namespace}-${params.gitBranch}'
+      String bc = "${namespace}-${params.gitBranch}"
 	    
       stage('Checkout') {
         try {
