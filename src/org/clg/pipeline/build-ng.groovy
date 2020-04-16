@@ -22,11 +22,11 @@ def build(def params) {
         try {
 	  echo 'about to checkout and print namespace'
 		
-	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
+	  echo "Hello from Angular-project ${openshift.project()} build-config is ${params.bldConfig} in cluster ${openshift.cluster()} - param is ${params}"
 
            sh '''
             
-	       echo "echo test build from shell in checkout stage ${bc}"
+	       echo "echo test build from shell in checkout stage ${params.bldConfig}"
 	      oc start-build "${params.bldConfig}" --from-dir=dist --follow
             '''
 		
@@ -59,8 +59,8 @@ def build(def params) {
             sh '''
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
-	       echo "Hello buildImage within shellscript ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
-	      oc start-build "${openshift.project()}-${params.gitBranch}" --from-dir=dist --follow
+	       echo "Hello buildImage within shellscript ${params.bldConfig}"
+	      oc start-build "${params.bldConfig}" --from-dir=dist --follow
             '''
 	    //kick off the build using Openshift raw command
 	    //openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
