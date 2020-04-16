@@ -21,6 +21,8 @@ def build(def params) {
           def pipelineValue = "${bc}"  //declare the parameter in groovy and use it in shellscript
           sh '''
              echo '''+pipelineValue+' abcd''''
+	     a = '''pipelineValue'''
+	     echo a
              '''
         }
 	    
