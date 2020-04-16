@@ -19,9 +19,10 @@ def build(def params) {
       
       stage('test') {
           def pipelineValue = "${bc}"  //declare the parameter in groovy and use it in shellscript
+	  /* learnt the hardway that singlequote and a plus character is required for groovy variable to be visible in shell*/
           sh '''
              echo '''+pipelineValue+'''
-	 
+	     oc start-build '''+bc+''' --from-dir=dist --follow
              '''
         }
 	    
@@ -29,14 +30,7 @@ def build(def params) {
         try {
 	  echo 'about to checkout and print namespace'
 		
-	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
-
-           sh '''
-            
-	       echo "echo test build from shell in checkout stage build config " + "-- " + bc
-	      oc start-build bc --from-dir=dist --follow
-            '''
-		
+	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"		
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
         } catch (Exception e) {
 	  echo 'retrying with sslverify turned off'
@@ -59,19 +53,16 @@ def build(def params) {
 
           //build image
        stage ('build image') {
-	    //    oc start-build angular-example-rhel --from-dir=dist --follow
-	       String bc2 = "${openshift.project()}-${params.gitBranch}"
-	        echo "Hello BuildImage ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
-	       echo "building from saroj3k-okd-pipeline bc ${bc2}"
-            sh '''
+
+	     /**
+	      * learnt the hardway that singlequote and a plus character is required for groovy variable to be visible in shell
+	      */	       
+	     sh '''
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
-	       echo "Hello buildImage within shellscript ${params.bldConfig}"
-	      oc start-build "${params.bldConfig}" --from-dir=dist --follow
+	      oc start-build '''+bc+''' --from-dir=dist --follow
             '''
-	    //kick off the build using Openshift raw command
-	    //openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
-
+	       
           } //stage build image	    
       } //openshift withProject
     } //openshift withCluster
