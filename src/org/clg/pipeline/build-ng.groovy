@@ -15,10 +15,24 @@ def build(def params) {
     openshift.withProject() {
       openshift.raw("label secret ${params.gitSecret} credential.sync.jenkins.openshift.io=true --overwrite")
       def namespace = openshift.project()
+      def build-conf = namespace-${params.gitBranch}
+ 	    
       stage('Checkout') {
         try {
 	  echo 'about to checkout and print namespace'
 	  echo namespace
+		echo build-conf
+ 		
+	  
+		      /*** to test substitution
+       ****
+       */
+       sh '''
+              oc start-build ${build-conf} --from-dir=dist --follow
+	      
+            '''
+
+		
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
         } catch (Exception e) {
 	  echo 'retrying with sslverify turned off'
