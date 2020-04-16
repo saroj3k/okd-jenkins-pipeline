@@ -20,11 +20,8 @@ def build(def params) {
         try {
 	  echo 'about to checkout and print namespace'
 		
-	  echo "Hello from Angular-project ${openshift.project()} in cluster ${openshift.cluster()}"
-         
-	  /*** temp **/
-	  //start build
-	  openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
+	  echo "Hello from Angular-project ${openshift.project()}-${params.gitBranch} in cluster ${openshift.cluster()}"
+
    
 		
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
@@ -54,9 +51,10 @@ def build(def params) {
             sh '''
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
+	      oc start-build "${openshift.project()}-${params.gitBranch}" --from-dir=dist --follow
             '''
 	    //kick off the build using Openshift raw command
-	    openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
+	    //openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
 
           } //stage build image	    
       } //openshift withProject
