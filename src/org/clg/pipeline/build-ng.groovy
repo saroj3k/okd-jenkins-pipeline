@@ -20,18 +20,13 @@ def build(def params) {
       stage('Checkout') {
         try {
 	  echo 'about to checkout and print namespace'
-	  echo namespace
-		echo build-conf
- 		
-	  
-		      /*** to test substitution
-       ****
-       */
-       sh '''
-              oc start-build ${build-conf} --from-dir=dist --follow
-	      
-            '''
-
+		
+	  echo "Hello from Angular-project ${openshift.project()} in cluster ${openshift.cluster()}"
+         
+	  /*** temp **/
+	  //start build
+	  openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
+   
 		
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
         } catch (Exception e) {
@@ -55,14 +50,15 @@ def build(def params) {
 
           //build image
        stage ('build image') {
-	       //    oc start-build angular-example-rhel --from-dir=dist --follow
+	    //    oc start-build angular-example-rhel --from-dir=dist --follow
 	    echo 'building from saroj3k-okd-pipeline'
             sh '''
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
-              oc start-build "${namespace}-${params.gitBranch}" --from-dir=dist --follow
-	      
             '''
+	    //kick off the build using Openshift raw command
+	    openshift.raw("start-build ${namespace}-${params.gitBranch} --from-dir=dist --follow")
+
           } //stage build image	    
       } //openshift withProject
     } //openshift withCluster
