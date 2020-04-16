@@ -16,6 +16,7 @@ def build(def params) {
       openshift.raw("label secret ${params.gitSecret} credential.sync.jenkins.openshift.io=true --overwrite")
       def namespace = openshift.project()
       String bc = "${namespace}-${params.gitBranch}"
+
 	    
       stage('Checkout') {
         try {
@@ -23,7 +24,11 @@ def build(def params) {
 		
 	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
 
-   
+           sh '''
+            
+	       echo "echo test build from shell in checkout stage ${bc}"
+	      oc start-build "${params.bldConfig}" --from-dir=dist --follow
+            '''
 		
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
         } catch (Exception e) {
@@ -50,7 +55,7 @@ def build(def params) {
 	    //    oc start-build angular-example-rhel --from-dir=dist --follow
 	       String bc2 = "${openshift.project()}-${params.gitBranch}"
 	        echo "Hello BuildImage ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
-	       echo 'building from saroj3k-okd-pipeline bc ${bc2}'
+	       echo "building from saroj3k-okd-pipeline bc ${bc2}"
             sh '''
               mkdir dist/nginx-cfg
               cp nginx/status.conf dist/nginx-cfg
