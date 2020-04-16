@@ -15,19 +15,19 @@ def build(def params) {
     openshift.withProject() {
       openshift.raw("label secret ${params.gitSecret} credential.sync.jenkins.openshift.io=true --overwrite")
       def namespace = openshift.project()
-      String bc = "${namespace}-${params.gitBranch}"
+      String bc = "${params.bldConfig}"
 
 	    
       stage('Checkout') {
         try {
 	  echo 'about to checkout and print namespace'
 		
-	  echo "Hello from Angular-project ${openshift.project()} build-config is ${params.bldConfig} in cluster ${openshift.cluster()} - param is ${params}"
+	  echo "Hello from Angular-project ${openshift.project()} build-config is ${bc} in cluster ${openshift.cluster()} - param is ${params}"
 
            sh '''
             
-	       echo "echo test build from shell in checkout stage ${params.bldConfig}"
-	      oc start-build "${params.bldConfig}" --from-dir=dist --follow
+	       echo "echo test build from shell in checkout stage build config " + "-- " + bc
+	      oc start-build bc --from-dir=dist --follow
             '''
 		
           git url: "${params.gitUrl}", branch: "${params.gitBranch}", credentialsId: "${namespace}-${params.gitSecret}"
