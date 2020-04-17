@@ -48,11 +48,20 @@ def build(def params) {
 
        //defaults to prod build
        stage ('build') {
+	       
             sh '$(npm bin)/ng build --prod --build-optimizer'
           } //stage build
 
        //build image
        stage ('build image') {
+	       
+	     /** To debug
+	       *
+	       */
+	     sh '''
+              npm --version
+              node --version
+             '''
 
 	     /**
 	      * learnt the hardway that singlequote and a plus character is required for groovy variable to be visible in shell
