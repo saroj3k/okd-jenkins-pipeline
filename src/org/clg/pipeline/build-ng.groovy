@@ -3,7 +3,7 @@ package org.clg.pipeline
 def start(def params) {
 
   stage("Launch Node Agent") {
-    node("nodejs10") {
+    node("nodejs") {
       git url: "${params.pipelineCodeGitUrl}", branch: "${params.pipelineCodeGitBranch}"
       build(params)
     }
